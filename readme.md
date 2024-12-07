@@ -28,3 +28,6 @@ npx eslint --init
 
 
 git add functions/.eslintrc.js functions/.gitignore functions/index.js functions/package-lock.json functions/package.json .firebaserc .gitignore firebase.json readme.md
+
+[qlcsvc-nckh)]@appspot.gserviceaccount.com
+gcloud projects get-iam-policy qlcsvc-nckh

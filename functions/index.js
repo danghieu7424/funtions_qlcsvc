@@ -9,55 +9,84 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
 
-const db = mysql.createConnection({
+
+/**
+ * Cấu hình kết nối MySQL sử dụng connection pool.
+ * @type {mysql.Pool}
+ */
+
+const pool = mysql.createPool({
   host: "danghieu7424.helioho.st",
   user: "danghieu7424_qlcsvc",
   password: "12345678qlcsvc@#",
   database: "danghieu7424_QLCSVC",
+  waitForConnections: true,
+  connectionLimit: 50,
+  queueLimit: 0,
 });
-
-db.connect((err) => {
-  if (err) {
-    console.error("Lỗi kết nối MySQL:", err);
-  } else {
-    console.log("Kết nối MySQL thành công!");
-  }
-});
+/**
+ * Thực hiện truy vấn SQL với các tham số.
+ * @param {string} query - Câu truy vấn SQL.
+ * @param {Array} params - Tham số cho câu truy vấn.
+ * @return {Promise} Trả về một Promise với kết quả truy vấn.
+ */
+function queryDatabase(query, params) {
+  return new Promise((resolve, reject) => {
+    pool.query(query, params, (err, results) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(results);
+      }
+    });
+  });
+}
 
 // -------select
-
-app.get("/api/phong_cntt", (req, res) => {
-  db.query("SELECT MAPH, TENP FROM PHONG WHERE MANG = 'CNTT'",
-      (err, results) => {
-        if (err) {
-          console.error("Lỗi truy vấn MySQL:", err);
-          res.status(500).send("Lỗi khi truy vấn");
-          return;
-        }
-        res.json(results);
-      });
+/**
+ * API lấy thông tin phòng CNTT.
+ * @route GET /api/phong_cntt
+ * @returns {Object[]} Danh sách các phòng CNTT.
+ */
+app.get("/api/phong_cntt", async (req, res) => {
+  try {
+    const results =
+    await queryDatabase("SELECT MAPH, TENP FROM PHONG WHERE MANG = 'CNTT'");
+    res.json(results);
+  } catch (err) {
+    console.error("Lỗi truy vấn MySQL:", err);
+    res.status(500).send("Lỗi khi truy vấn");
+  }
 });
-app.get("/api/phong_ddtu", (req, res) => {
-  db.query("SELECT MAPH, TENP FROM PHONG WHERE MANG = 'DDTU'",
-      (err, results) => {
-        if (err) {
-          console.error("Lỗi truy vấn MySQL:", err);
-          res.status(500).send("Lỗi khi truy vấn");
-          return;
-        }
-        res.json(results);
-      });
+/**
+ * API lấy thông tin phòng DDTU.
+ * @route GET /api/phong_ddtu
+ * @returns {Object[]} Danh sách các phòng DDTU.
+ */
+app.get("/api/phong_ddtu", async (req, res) => {
+  try {
+    const results =
+    await queryDatabase("SELECT MAPH, TENP FROM PHONG WHERE MANG = 'DDTU'");
+    res.json(results);
+  } catch (err) {
+    console.error("Lỗi truy vấn MySQL:", err);
+    res.status(500).send("Lỗi khi truy vấn");
+  }
 });
-app.get("/api/phong_ktck", (req, res) => {
-  db.query("SELECT MAPH, TENP FROM PHONG WHERE MANG = 'KTCK'",
-      (err, results) => {
-        if (err) {
-          console.error("Lỗi truy vấn MySQL:", err);
-          res.status(500).send("Lỗi khi truy vấn");
-          return;
-        }
-        res.json(results);
-      });
+/**
+ * API lấy thông tin phòng KTCK.
+ * @route GET /api/phong_ktck
+ * @returns {Object[]} Danh sách các phòng KTCK.
+ */
+app.get("/api/phong_ktck", async (req, res) => {
+  try {
+    const results =
+    await queryDatabase("SELECT MAPH, TENP FROM PHONG WHERE MANG = 'KTCK'");
+    res.json(results);
+  } catch (err) {
+    console.error("Lỗi truy vấn MySQL:", err);
+    res.status(500).send("Lỗi khi truy vấn");
+  }
 });
 
 // =======================================
